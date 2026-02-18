@@ -76,20 +76,21 @@ Pipelining:** Implement a 2-stage pipeline to increase throughput to 200MHz.
 Power Analysis:** Perform IR drop analysis using OpenLane's voltage tools.
 Multiplier Integration:** Merge with my Serial-Parallel Multiplier (SPM) project.
 
+
 Physical Implementation (Sky130)
 The 8-bit ALU was implemented using the OpenLane RTL-to-GDSII flow. The views below demonstrate the floorplanning, placement, and routing density.
 
-Final Layout (Full Die) Routing Detail
-<img src="./images/final layout.png" width="400"> | <img src="./images/final layout routing.png" width="400"> 
-Top-level floorplan showing I/O pins. Detailed view of metal routing layers. 
+Full Die Floorplan (100um x 100um) Routing & Interconnects
+<img src="./layout.png" width="400"> | <img src="./final layout routing.png" width="400"> 
+Top-level floorplan showing I/O pins. Detailed view of metal routing layers.
 
 Standard Cell Placement
-
-<img src="./images/layout.png" width="800"> 
+<img src="./final layout.png" width="800"> 
 Zoomed-in view of the logic gate placement.
 
-Note
+Note: 
 The design achieves a core utilization of roughly 40% with zero DRC/LVS violations.
+
 License
 
 Apache 2.0
