@@ -1,7 +1,13 @@
-# Sky130_8bit_ALU_Implementation
+Sky130_8bit_ALU_Implementation
 RTL-to-GDSII flow of an 8-bit Synchronous ALU using SkyWater 130nm PDK and OpenLane.
-# 8-bit Synchronous ALU
 
+8-bit Synchronous ALU
+
+Physical Implementation (Sky130)
+This design was taken through the complete OpenLane RTL-to-GDSII flow.
+![Layout GDSII View](./layout/alu_chip_layout.png)
+
+Figure 1: Final GDSII Layout showing standard cells and routing in SkyWater 130nm.*
 A simple RTL implementation of an 8-bit ALU written in Verilog. I built this as the processing core for a low-power environmental monitoring system, and it's designed to be compatible with the SkyWater 130nm open-source PDK.
 
 This work ties into my research on IoT-based air quality monitoring — published in Taylor & Francis (2024) — where I needed a lightweight, custom compute unit that didn't draw much power.
