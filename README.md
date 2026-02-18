@@ -47,7 +47,35 @@ Tools
 - GTKWave (waveform viewer)
 - SkyWater 130nm PDK
 
+How to Run the Simulation
+To verify the design using Icarus Verilog, follow these steps:
 
-## License
+1. Clone the repository
+   bash
+   git clone [https://github.com/YOUR_USERNAME/Sky130_8bit_ALU.git](https://github.com/konark-icdesign/Sky130_8bit_ALU.git)
+   cd Sky130_8bit_ALU
+Compile the RTL and Testbench
+
+Bash
+iverilog -o sim/alu_sim rtl/alu.v testbench/alu_tb.v
+Run the Simulation
+
+Bash
+vvp sim/alu_sim
+View Waveforms (Optional)
+
+Bash
+gtkwave sim/dump.vcd
+
+2. The "Future Roadmap" (Shows Ambition)**
+Professors love students who think ahead. Add this small section at the very end. It tells them, *"I'm not done learning."*
+
+markdown
+Future Work
+Pipelining:** Implement a 2-stage pipeline to increase throughput to 200MHz.
+Power Analysis:** Perform IR drop analysis using OpenLane's voltage tools.
+Multiplier Integration:** Merge with my Serial-Parallel Multiplier (SPM) project.
+
+License
 
 Apache 2.0
