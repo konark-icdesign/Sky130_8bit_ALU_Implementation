@@ -80,9 +80,8 @@ Multiplier Integration:** Merge with my Serial-Parallel Multiplier (SPM) project
 Physical Implementation (Sky130)
 The 8-bit ALU was implemented using the OpenLane RTL-to-GDSII flow. The views below demonstrate the floorplanning, placement, and routing density.
 
-Full Die Floorplan (100um x 100um) Routing & Interconnects
+
 <img src="./layout.png" width="400"> | <img src="./final layout routing.png" width="400"> 
-Top-level floorplan showing I/O pins. Detailed view of metal routing layers.
 
 Standard Cell Placement
 <img src="./final layout.png" width="800"> 
