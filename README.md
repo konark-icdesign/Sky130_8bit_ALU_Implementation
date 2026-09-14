@@ -1,95 +1,91 @@
-Sky130_8bit_ALU_Implementation
-RTL-to-GDSII flow of an 8-bit Synchronous ALU using SkyWater 130nm PDK and OpenLane.
+# Sky130 8-bit ALU Implementation
 
-8-bit Synchronous ALU
+An 8-bit combinational ALU implemented in Verilog and taken through an OpenLane/SkyWater 130 nm physical-design flow.
 
-Physical Implementation (Sky130)
-This design was taken through the complete OpenLane RTL-to-GDSII flow.
-![Layout GDSII View](./layout/alu_chip_layout.png)
+## What the design does
 
-Figure 1: Final GDSII Layout showing standard cells and routing in SkyWater 130nm.*
-A simple RTL implementation of an 8-bit ALU written in Verilog. I built this as the processing core for a low-power environmental monitoring system, and it's designed to be compatible with the SkyWater 130nm open-source PDK.
+The ALU accepts two 8-bit operands (`A`, `B`) and a 3-bit opcode.
 
-This work ties into my research on IoT-based air quality monitoring — published in Taylor & Francis (2024) — where I needed a lightweight, custom compute unit that didn't draw much power.
+| Opcode | Operation | Notes |
+|---|---|---|
+| `000` | ADD | 8-bit addition with carry-out |
+| `001` | SUB | 8-bit subtraction |
+| `010` | AND | Bitwise AND |
+| `011` | OR | Bitwise OR |
+| `100` | XOR | Bitwise XOR |
 
-What's in here
+## Repository structure
 
-rtl/          → alu.v (the actual hardware logic)
-testbench/    → alu_tb.v (simulation + verification)
-sim/          → compiled sim binary (alu_sim)
+```text
+rtl/          Verilog RTL
+  alu.v
 
-Supported Operations
+testbench/    Simulation testbench
+  alu_tb.v
 
-The ALU takes a 3-bit opcode and operates on two 8-bit inputs:
+sim/          Simulation output files
+```
 
-| Opcode | Op  | Notes |
-|--------|-----|-------|
-| `000`  | ADD | Produces carry-out on overflow |
-| `001`  | SUB | Standard 8-bit subtraction |
-| `010`  | AND | Bitwise |
-| `011`  | OR  | Bitwise |
-| `100`  | XOR | Bitwise |
+The repository also contains layout/routing screenshots from the physical-design run.
 
-Verification
+## RTL design
 
-Simulated with Icarus Verilog. The testbench covers arithmetic overflow behavior and bitwise logic correctness. A few quick sanity checks from the sim log:
+The core logic is implemented in `rtl/alu.v` using a combinational `case` statement. Addition returns an explicit carry bit; the other implemented operations return an 8-bit result.
 
-`10 + 5 = 15`, carry = 0 
-`10 - 3 = 7` 
-AND/OR/XOR tested against `1100` and `1010` inputs 
+## Verification
 
-Waveforms viewed in GTKWave.
+The current testbench in `testbench/alu_tb.v` exercises:
 
-Tools
+- addition
+- subtraction
+- bitwise AND
+- bitwise OR
+- bitwise XOR
 
-- Verilog (HDL)
-- Icarus Verilog (simulation)
-- GTKWave (waveform viewer)
-- SkyWater 130nm PDK
+The present testbench is a basic directed testbench. A stronger self-checking testbench with exhaustive/random vectors is planned as a next improvement.
 
-How to Run the Simulation
-To verify the design using Icarus Verilog, follow these steps:
+### Run with Icarus Verilog
 
-1. Clone the repository
-   bash
-   git clone [https://github.com/YOUR_USERNAME/Sky130_8bit_ALU.git](https://github.com/konark-icdesign/Sky130_8bit_ALU.git)
-   cd Sky130_8bit_ALU
-Compile the RTL and Testbench
+```bash
+git clone https://github.com/konark-icdesign/Sky130_8bit_ALU_Implementation.git
+cd Sky130_8bit_ALU_Implementation
 
-Bash
 iverilog -o sim/alu_sim rtl/alu.v testbench/alu_tb.v
-Run the Simulation
-
-Bash
 vvp sim/alu_sim
-View Waveforms (Optional)
+```
 
-Bash
-gtkwave sim/dump.vcd
+## Physical implementation
 
-2. The "Future Roadmap" (Shows Ambition)**
-Professors love students who think ahead. Add this small section at the very end. It tells them, *"I'm not done learning."*
+The design was taken through an OpenLane flow targeting the SkyWater 130 nm open PDK. The repository currently includes visual outputs from placement/routing/layout inspection.
 
-markdown
-Future Work
-Pipelining:** Implement a 2-stage pipeline to increase throughput to 200MHz.
-Power Analysis:** Perform IR drop analysis using OpenLane's voltage tools.
-Multiplier Integration:** Merge with my Serial-Parallel Multiplier (SPM) project.
+![Final layout](./final%20layout.png)
 
+![Final routing view](./final%20layout%20routing.png)
 
-Physical Implementation (Sky130)
-The 8-bit ALU was implemented using the OpenLane RTL-to-GDSII flow. The views below demonstrate the floorplanning, placement, and routing density.
+## Tools used
 
+- Verilog HDL
+- Icarus Verilog
+- GTKWave
+- OpenLane
+- Yosys
+- OpenROAD
+- KLayout
+- SkyWater 130 nm PDK
 
-<img src="./layout.png" width="400"> | <img src="./final layout routing.png" width="400"> 
+## What I learned
 
-Standard Cell Placement
-<img src="./final layout.png" width="800"> 
-Zoomed-in view of the logic gate placement.
+This project was used to connect RTL coding with the broader ASIC implementation flow: functional RTL, simulation, synthesis/implementation, placement/routing, and layout inspection.
 
-Note: 
-The design achieves a core utilization of roughly 40% with zero DRC/LVS violations.
+## Next improvements
 
-License
+- replace the directed testbench with a self-checking verification environment
+- add exhaustive/randomized functional testing
+- add reproducible OpenLane configuration files
+- publish synthesis, timing, area and utilization reports
+- document DRC/LVS results with generated reports instead of screenshots alone
+- compare timing/area across different constraints
+
+## License
 
 Apache 2.0
