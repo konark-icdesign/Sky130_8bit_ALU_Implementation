@@ -1,0 +1,26 @@
+name: ALU RTL CI
+
+on:
+  push:
+    branches: [ main, portfolio-cleanup ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  verify-and-synth:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y iverilog yosys
+
+      - name: Run exhaustive self-checking simulation
+        run: make test
+
+      - name: Run Yosys synthesis smoke test
+        run: make synth
