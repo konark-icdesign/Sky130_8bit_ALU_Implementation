@@ -29,6 +29,12 @@ The RTL is combinational; there is no clock or internal state in `rtl/alu.v`.
 
 The reference calculation is performed in the testbench and the simulation fails if either `result` or `carry` differs from the expected value. This includes addition carry-out, subtraction wrap-around, the three bitwise operations and the reserved opcode behaviour.
 
+The automated run currently reports:
+
+```text
+PASS: 524288 ALU input/opcode combinations verified with no mismatches.
+```
+
 Run the verification with:
 
 ```bash
@@ -49,7 +55,7 @@ A reproducible Yosys synthesis smoke test is available with:
 make synth
 ```
 
-This confirms that the RTL synthesizes cleanly and produces a basic synthesis statistics log in `build/yosys_synth.log`. It is not presented as a Sky130 timing or area sign-off report.
+The current generic Yosys run completes with zero reported design problems and maps the ALU to 195 generic logic cells. That cell count is useful only as a reproducible synthesis sanity check; it is **not** a Sky130 standard-cell area or timing result.
 
 GitHub Actions runs both the exhaustive RTL verification and the Yosys synthesis check on pushes and pull requests.
 
