@@ -1,3 +1,5 @@
+`timescale 1ns/1ps
+
 module alu (
     input  [7:0] A,
     input  [7:0] B,
@@ -7,7 +9,8 @@ module alu (
 );
 
 always @(*) begin
-    carry = 0;
+    carry = 1'b0;
+
     case (opcode)
         3'b000: begin
             {carry, result} = A + B;
@@ -36,4 +39,3 @@ always @(*) begin
 end
 
 endmodule
-
