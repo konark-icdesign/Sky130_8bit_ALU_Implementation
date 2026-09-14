@@ -1,8 +1,8 @@
-# Sky130 8-bit ALU Implementation
+# 8-bit ALU RTL, Verification and Synthesis
 
-An 8-bit combinational ALU written in Verilog and used as a small RTL-to-physical-design learning project with the SkyWater 130 nm ecosystem.
+An 8-bit combinational ALU written in Verilog and used as a compact digital-design project covering RTL, exhaustive functional verification, waveform inspection and synthesis.
 
-The ALU logic itself is intentionally simple. The main purpose of the project is to connect functional RTL, verification, synthesis and physical-layout work in one small design that is easy to inspect end to end.
+The ALU itself is intentionally small so that the complete logic can be verified and inspected end to end. A reproducible Sky130/OpenLane physical-design run is the next stage of the project; this branch does not claim physical-design measurements that are not backed by saved reports.
 
 ## ALU functions
 
@@ -27,7 +27,7 @@ The RTL is combinational; there is no clock or internal state in `rtl/alu.v`.
 256 A values x 256 B values x 8 opcodes = 524,288 checks
 ```
 
-The reference calculation is performed in the testbench and the simulation fails if either `result` or `carry` differs from the expected value. This includes addition carry-out, subtraction wrap-around, the three bitwise operations and the reserved opcode behaviour.
+The reference calculation is performed independently in the testbench. The simulation fails if either `result` or `carry` differs from the expected value. The checks cover addition carry-out, subtraction wrap-around, AND, OR, XOR and the reserved opcode behaviour.
 
 The automated run currently reports:
 
@@ -41,7 +41,7 @@ Run the verification with:
 make test
 ```
 
-A smaller waveform-oriented testbench is kept separately so a useful VCD can be generated without dumping the entire exhaustive run:
+A separate compact testbench generates a useful VCD without dumping the full exhaustive run:
 
 ```bash
 make wave
@@ -55,21 +55,15 @@ A reproducible Yosys synthesis smoke test is available with:
 make synth
 ```
 
-The current generic Yosys run completes with zero reported design problems and maps the ALU to 195 generic logic cells. That cell count is useful only as a reproducible synthesis sanity check; it is **not** a Sky130 standard-cell area or timing result.
+The current generic Yosys run completes with zero reported design problems and maps the design to 195 generic logic cells. This is a synthesis sanity check only; the number is not a Sky130 standard-cell area, timing or power result.
 
 GitHub Actions runs both the exhaustive RTL verification and the Yosys synthesis check on pushes and pull requests.
 
-## Sky130 physical implementation
+## Physical-design status
 
-I also used this ALU as a small physical-design exercise with OpenLane and the SkyWater 130 nm open PDK. The repository preserves screenshots from the placement/routing/layout work, including the final layout and routed view:
+The current repository does **not** claim a verified Sky130 RTL-to-GDS result. The original OpenLane configuration, run directory and sign-off reports are not present in the Git history, so exact area, utilization, timing, DRC and LVS results cannot be reproduced from the saved project files.
 
-![Final layout](./final%20layout.png)
-
-![Final routing view](./final%20layout%20routing.png)
-
-Additional historical views are kept in the repository root.
-
-The original OpenLane run directory, configuration and generated sign-off reports are not currently preserved in this repository. Because of that, this README does **not** claim exact utilization, timing, area, DRC or LVS numbers from the earlier run. A future reproducible OpenLane rerun can add those measurements with the corresponding reports.
+The next physical-design step is to rerun this exact `alu.v` through OpenLane/Sky130 and commit the configuration together with the generated synthesis/STA reports, DEF/GDS outputs, routing results and DRC/LVS evidence. Until that run is reproduced, the RTL verification and generic synthesis results above are the verified results of this repository.
 
 ## Repository structure
 
@@ -87,22 +81,20 @@ testbench/
 Makefile                   # test / wave / synth targets
 ```
 
-## Tools used
+## Tools used in the reproducible flow
 
 - Verilog HDL
 - Icarus Verilog
 - GTKWave
 - Yosys
-- OpenLane
-- OpenROAD
-- KLayout
-- SkyWater 130 nm PDK
+- GNU Make
+- GitHub Actions
 
 ## What this project demonstrates
 
-This is not intended to be a complex processor ALU. It is a compact block used to practice the digital ASIC flow: write RTL, verify the logic, synthesize it, then study how the design is represented as placed and routed standard-cell logic in a physical layout.
+This is not intended to be a complex processor ALU. It demonstrates a disciplined small-block workflow: write combinational RTL, define expected behaviour, verify every input/opcode combination, inspect waveforms, and confirm that the RTL synthesizes cleanly.
 
-The next meaningful extension is a fully reproducible Sky130/OpenLane rerun with the configuration, synthesis/STA reports, area/utilization data, routing results and DRC/LVS evidence committed alongside the layout views.
+The next meaningful extension is the reproducible Sky130/OpenLane implementation described above rather than adding arbitrary ALU features.
 
 ## License
 
