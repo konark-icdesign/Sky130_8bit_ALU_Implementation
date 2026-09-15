@@ -1,0 +1,3 @@
+read_verilog -formal rtl/alu.v formal/alu_formal.v
+prep -top alu_formal
+sat -verify -prove-asserts -set-def-inputs
