@@ -2,7 +2,7 @@ name: ALU RTL CI
 
 on:
   push:
-    branches: [ main, portfolio-cleanup ]
+    branches: [ main, formal-check ]
   pull_request:
     branches: [ main ]
 
@@ -24,3 +24,6 @@ jobs:
 
       - name: Run Yosys synthesis smoke test
         run: make synth
+
+      - name: Prove ALU properties with Yosys SAT
+        run: make formal
