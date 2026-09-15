@@ -5,7 +5,7 @@ WAVE_TB := testbench/alu_wave_tb.v
 SIM := $(BUILD_DIR)/alu_tb
 WAVE_SIM := $(BUILD_DIR)/alu_wave_tb
 
-.PHONY: all test wave synth clean
+.PHONY: all test wave synth formal clean
 
 all: test
 
@@ -23,6 +23,9 @@ wave: $(BUILD_DIR)
 
 synth: $(BUILD_DIR)
 	yosys -p "read_verilog $(RTL); hierarchy -check -top alu; synth -top alu; stat" | tee $(BUILD_DIR)/yosys_synth.log
+
+formal: $(BUILD_DIR)
+	yosys -s formal/prove.ys | tee $(BUILD_DIR)/yosys_formal.log
 
 clean:
 	rm -rf $(BUILD_DIR)
