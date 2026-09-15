@@ -1,12 +1,10 @@
 # 8-bit ALU RTL, Verification and Synthesis
 
-An 8-bit combinational ALU written in Verilog and used as a compact digital-design project covering RTL, exhaustive functional verification, waveform inspection and synthesis.
+An 8-bit combinational ALU written in Verilog. Kept this one small on purpose so the whole thing can be checked properly instead of only showing a few waveform cases.
 
-The ALU itself is intentionally small so that the complete logic can be verified and inspected end to end. A reproducible Sky130/OpenLane physical-design run is the next stage of the project; this branch does not claim physical-design measurements that are not backed by saved reports.
+The current repo covers RTL, exhaustive simulation, a Yosys synthesis smoke test and now a small formal check. Physical-design numbers are still not claimed because the old OpenLane run/report set is not available.
 
 ## ALU functions
-
-The design accepts two 8-bit operands (`A`, `B`) and a 3-bit opcode.
 
 | Opcode | Operation | Behaviour |
 |---|---|---|
@@ -15,86 +13,92 @@ The design accepts two 8-bit operands (`A`, `B`) and a 3-bit opcode.
 | `010` | AND | Bitwise AND |
 | `011` | OR | Bitwise OR |
 | `100` | XOR | Bitwise XOR |
-| `101`-`111` | Reserved | Output and carry return to zero |
+| `101`-`111` | Reserved | result and carry go to zero |
 
-The RTL is combinational; there is no clock or internal state in `rtl/alu.v`.
+The RTL is combinational, no clock or internal state.
 
 ## Verification
 
-`testbench/alu_tb.v` is self-checking and exhaustively tests every pair of 8-bit inputs across all eight opcode values:
+`testbench/alu_tb.v` exhaustively checks:
 
 ```text
-256 A values x 256 B values x 8 opcodes = 524,288 checks
+256 A values x 256 B values x 8 opcodes = 524,288 cases
 ```
 
-The reference calculation is performed independently in the testbench. The simulation fails if either `result` or `carry` differs from the expected value. The checks cover addition carry-out, subtraction wrap-around, AND, OR, XOR and the reserved opcode behaviour.
+The testbench calculates the expected result separately and stops on a mismatch.
 
-The automated run currently reports:
+Current simulation result:
 
 ```text
 PASS: 524288 ALU input/opcode combinations verified with no mismatches.
 ```
 
-Run the verification with:
+Run it with:
 
 ```bash
 make test
 ```
 
-A separate compact testbench generates a useful VCD without dumping the full exhaustive run:
+For a smaller VCD/waveform run:
 
 ```bash
 make wave
 ```
 
-## Synthesis check
-
-A reproducible Yosys synthesis smoke test is available with:
+## Synthesis
 
 ```bash
 make synth
 ```
 
-The current generic Yosys run completes with zero reported design problems and maps the design to 195 generic logic cells. This is a synthesis sanity check only; the number is not a Sky130 standard-cell area, timing or power result.
+The generic Yosys smoke run maps the design to 195 generic logic cells. This is only a synthesis sanity check, not Sky130 area/timing/power.
 
-GitHub Actions runs both the exhaustive RTL verification and the Yosys synthesis check on pushes and pull requests.
+## Formal check
+
+I added a second way of checking the ALU using Yosys SAT.
+
+Instead of looping through vectors in a testbench, `formal/alu_formal.v` states what each opcode is supposed to do and Yosys tries to prove those assertions for all possible 8-bit inputs.
+
+```bash
+make formal
+```
+
+The properties cover ADD/carry, wrap-around SUB, AND, OR, XOR and the reserved opcodes.
 
 ## Physical-design status
 
-The current repository does **not** claim a verified Sky130 RTL-to-GDS result. The original OpenLane configuration, run directory and sign-off reports are not present in the Git history, so exact area, utilization, timing, DRC and LVS results cannot be reproduced from the saved project files.
+The repo does **not** currently claim a reproducible Sky130 RTL-to-GDS result. The original OpenLane config/run/sign-off files are not in the project history, so old area/utilization/DRC/LVS numbers cannot be backed up properly.
 
-The next physical-design step is to rerun this exact `alu.v` through OpenLane/Sky130 and commit the configuration together with the generated synthesis/STA reports, DEF/GDS outputs, routing results and DRC/LVS evidence. Until that run is reproduced, the RTL verification and generic synthesis results above are the verified results of this repository.
+If I revisit physical design, the useful next step is to rerun this exact RTL and keep the config plus synthesis, STA, routing, DRC and LVS reports.
 
-## Repository structure
+## Structure
 
 ```text
 rtl/
-  alu.v                    # combinational ALU RTL
+  alu.v
 
 testbench/
-  alu_tb.v                 # exhaustive self-checking verification
-  alu_wave_tb.v            # compact waveform test
+  alu_tb.v
+  alu_wave_tb.v
+
+formal/
+  alu_formal.v
+  prove.ys
 
 .github/workflows/
-  verilog-ci.yml           # automated verification + Yosys smoke test
+  verilog-ci.yml
 
-Makefile                   # test / wave / synth targets
+Makefile
 ```
 
-## Tools used in the reproducible flow
+## Tools
 
-- Verilog HDL
+- Verilog
 - Icarus Verilog
 - GTKWave
 - Yosys
 - GNU Make
 - GitHub Actions
-
-## What this project demonstrates
-
-This is not intended to be a complex processor ALU. It demonstrates a disciplined small-block workflow: write combinational RTL, define expected behaviour, verify every input/opcode combination, inspect waveforms, and confirm that the RTL synthesizes cleanly.
-
-The next meaningful extension is the reproducible Sky130/OpenLane implementation described above rather than adding arbitrary ALU features.
 
 ## License
 
